@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#69A9E6',
+    backgroundColor: '#5C9EDC',
   },
   flex: {
     flex: 1,
