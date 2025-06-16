@@ -11,12 +11,10 @@ import { style } from './style';
 import LogoAmparo from '../../assets/LogoAmparo.png';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Entypo from '@expo/vector-icons/Entypo';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack'; 
+import { RootStackParamList } from '../../../App';
 
-type RootStackParamList = {
-  Login: undefined; 
-  Home: undefined;  
-};
 
 type LoginScreenProps = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
@@ -24,6 +22,11 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
   // estado para armazenar usuário e senha (exemplo, para simular login)
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
+<<<<<<< Updated upstream
+=======
+  const [loading, setLoading] = React.useState(false)
+  const [rememberMe, setRememberMe] = React.useState(false);
+>>>>>>> Stashed changes
 
   const handleLogin = () => {
     // aqui vamos implementar a lógica de autenticação real.
@@ -51,10 +54,10 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
         <View style={style.boxInput}>
           <TextInput
             style={style.textInput}
-            placeholder="Digite seu usuário" // Adicione um placeholder
+            placeholder="Digite seu usuário"
             value={username}
             onChangeText={setUsername}
-            autoCapitalize="none" // Para evitar autocapitalização em campos de usuário
+            autoCapitalize="none"
           />
           <AntDesign
             name='user'
@@ -63,7 +66,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
           />
         </View>
 
-        <Text style={style.textTitle}>SENHA</Text>
+        <Text style={style.textTitle}>PIN</Text>
         <View style={style.boxInput}>
           <TextInput
             style={style.textInput}
@@ -73,14 +76,32 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
             secureTextEntry={true} // ocultar a senha
           />
           <Entypo
-            name="eye" // talvez adicione uma funcionalidade para toggle visibilidade
+            name="eye"
             size={24}
             color="black"
           />
         </View>
+<<<<<<< Updated upstream
         <TouchableOpacity> {/* tornar o texto 'esqueci minha senha' clicável */}
+=======
+        <View style={style.rowBetween}>
+          <TouchableOpacity
+            style={style.rememberMeContainer}
+            onPress={() => setRememberMe(!rememberMe)}
+            activeOpacity={0.7}
+          >
+            <MaterialIcons
+              name={rememberMe ? "check-box" : "check-box-outline-blank"}
+              size={20}
+              color="#fff"
+            />
+            <Text style={style.rememberMeText}>Lembre-se de mim</Text>
+          </TouchableOpacity>
+          <TouchableOpacity> 
+>>>>>>> Stashed changes
             <Text style={style.textForget}>Esqueci minha senha</Text>
-        </TouchableOpacity>
+          </TouchableOpacity>
+        </View>
       </View>
 
       <View style={style.boxBottom}>
@@ -89,9 +110,15 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
         </TouchableOpacity>
       </View>
 
+<<<<<<< Updated upstream
       <TouchableOpacity> {/* tornar o texto 'não tem conta?' clicável */}
         <Text style={style.textBotton}>Não tem conta? Criar agora!</Text>
       </TouchableOpacity>
+=======
+     <TouchableOpacity onPress={() => navigation.navigate('CadastroScreen')}>
+      <Text style={style.textBotton}>Não tem conta? Criar agora!</Text>
+    </TouchableOpacity>
+>>>>>>> Stashed changes
     </View>
   );
 }

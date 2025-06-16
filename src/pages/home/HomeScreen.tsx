@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
     flex: 1, // cor de fundo geral da tela
   },
   remindersTitle: {
-    color: '#333',
+    color: 'rgba(79, 131, 217, 1)',
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,

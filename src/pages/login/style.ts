@@ -81,7 +81,7 @@ export const style = StyleSheet.create({
         letterSpacing: 1,
     },
     textForget:{
-        alignSelf:'flex-start',
+        alignSelf:'flex-end',
         color:'#E9EDF6',
         fontSize: 15,
         fontWeight:'500',
@@ -106,5 +106,23 @@ export const style = StyleSheet.create({
         marginBottom: 2,
         marginTop: 15,
         paddingLeft: 8,
-    }
+    },
+    rowBetween: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        width: '100%',
+        marginTop: 4,
+        marginBottom: 4,
+    },
+    rememberMeContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    rememberMeText: {
+        alignSelf: 'flex-start',
+        marginLeft: 5,
+        color: "#fff",
+        fontSize: 15,
+    },
 })
