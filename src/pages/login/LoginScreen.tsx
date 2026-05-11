@@ -112,8 +112,8 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
       </View>
 
       <View style={style.boxBottom}>
-        <TouchableOpacity 
-          style={[style.button, loading && {backgroundColor: '#ccc'}]} 
+        <TouchableOpacity
+          style={[style.button, loading && {backgroundColor: '#ccc'}]}
           onPress={handleLogin}
           disabled={loading}
         >
@@ -123,12 +123,14 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
             <Text style={style.textButton}>Entrar</Text>
           )}
         </TouchableOpacity>
-      </View>
 
-      {/* Ajuste o nome da tela de cadastro se necessário */}
-      <TouchableOpacity onPress={() => navigation.navigate('CadastroUsuario' as never)}>
-        <Text style={style.textBotton}>Não tem conta? Criar agora!</Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={style.registerLink}
+          onPress={() => navigation.navigate('CadastroUsuario')}
+        >
+          <Text style={style.textBotton}>Não tem conta? Criar agora!</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }

@@ -3,10 +3,15 @@ import { Dimensions, StyleSheet } from "react-native";
 export const style = StyleSheet.create({
     boxBottom:{
         alignItems:'center',
-        height:Dimensions.get('window').height/3,
-        marginBottom: -40,
         paddingTop: 40,
-        width:'40%'
+        paddingBottom: 24,
+        width:'80%',
+        gap: 16,
+    },
+    registerLink:{
+        marginTop: 8,
+        paddingVertical: 8,
+        paddingHorizontal: 16,
     },
     boxInput:{
         alignItems:'center',
