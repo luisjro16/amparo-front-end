@@ -47,24 +47,6 @@ export default function HistoricoScreen() {
     if (isYesterday(date)) return 'Ontem';
     return format(date, "EEEE, dd 'de' MMMM", { locale: ptBR });
   };
-
-  const inspecionarAlarmesDoIphone = async () => {
-    // Busca todas as notificações que estão AGENDADAS na fila do iOS
-    const agendadas = await Notifications.getAllScheduledNotificationsAsync();
-    
-    console.log("=========================================");
-    console.log(`Fila de Notificações do iOS (${agendadas.length} alarmes):`);
-    
-    agendadas.forEach((notif, index) => {
-      console.log(`[Alarme ${index + 1}]`);
-      console.log(`- Título: ${notif.content.title}`);
-      console.log(`- Mensagem: ${notif.content.body}`);
-      console.log("- Gatilho (Trigger):", JSON.stringify(notif.trigger));
-    });
-    console.log("=========================================");
-    
-    Alert.alert("Diagnóstico", `Existem ${agendadas.length} alarmes agendados no sistema. Olhe o terminal!`);
-  };
   
   const groupedRecords = useMemo(() => {
     if (registros.length === 0) return [];
@@ -149,14 +131,6 @@ export default function HistoricoScreen() {
     <View style={styles.container}>
       <Header logoSource={LogoAmparo} />
       <Text style={styles.title}>Histórico de Medicamentos</Text>
-      {/* <TouchableOpacity 
-        style={{ backgroundColor: '#3F7EE4', padding: 10, margin: 10, borderRadius: 8 }}
-        onPress={inspecionarAlarmesDoIphone}
-      >
-        <Text style={{ color: '#fff', textAlign: 'center', fontWeight: 'bold' }}>
-          🔍 INSPECIONAR ALARMES NO IPHONE
-        </Text>
-      </TouchableOpacity> */}
 
       {loading ? (
         <ActivityIndicator size="large" color="#3F7EE4" style={{ flex: 1 }}/>

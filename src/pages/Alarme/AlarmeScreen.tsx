@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'; // <-- Importe o useRef aqui
+import React, { useState, useRef } from 'react'; 
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { useRoute, useNavigation, useFocusEffect } from '@react-navigation/native';
 import { FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
@@ -11,12 +11,10 @@ export default function AlarmScreen() {
   const navigation = useNavigation<any>();
   const { agendamentoId: initialAgendamentoId } = route.params;
 
-  // Trocamos o agendamentoId fixo por um Estado, para podermos mudar o ID dinamicamente
   const [currentAgendamentoId, setCurrentAgendamentoId] = useState(initialAgendamentoId);
   const [agendamento, setAgendamento] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  // O useRef guarda um backup seguro dos dados ANTES de qualquer edição
   const agendamentoRef = useRef<any>(null);
 
   useFocusEffect(
@@ -24,40 +22,34 @@ export default function AlarmScreen() {
       const fetchAgendamentoDetails = async () => {
         setLoading(true);
         try {
-          // 1. Tenta buscar pelo ID atual
           const response = await api.get(`/api/agendamentos/${currentAgendamentoId}/`);
           setAgendamento(response.data);
-          agendamentoRef.current = response.data; // Atualiza o backup
+          agendamentoRef.current = response.data; 
         } catch (error: any) {
           
-          // 2. Se deu 404, MAS nós temos o backup na memória...
           if (error.response && error.response.status === 404 && agendamentoRef.current) {
             console.log("Procurando o agendamento recriado pós-edição...");
             try {
-              // Puxa a lista completa
               const listaResponse = await api.get('/api/agendamentos/');
               const novaLista = listaResponse.data;
 
-              // Encontra o novo ID: mesmo remédio e mesmo horário!
               const novoAgendamento = novaLista.find((a: any) =>
                 a.medicamento.id === agendamentoRef.current.medicamento.id &&
                 a.horario === agendamentoRef.current.horario
               );
 
               if (novoAgendamento) {
-                // MÁGICA: Substitui o ID velho pelo novo por debaixo dos panos!
                 setCurrentAgendamentoId(novoAgendamento.id);
                 setAgendamento(novoAgendamento);
                 agendamentoRef.current = novoAgendamento;
                 setLoading(false);
-                return; // Sai da função com sucesso, a tela vai recarregar linda e com estoque!
+                return; 
               }
             } catch (e) {
               console.error("Erro na busca de recuperação:", e);
             }
           }
 
-          // 3. Se não encontrar o novo (ex: o usuário editou e MUDOU A HORA do remédio)
           Alert.alert("Lembrete Expirado", "O horário deste tratamento foi alterado e este alarme não é mais válido.");
           navigation.navigate('Home');
         } finally {
@@ -66,13 +58,13 @@ export default function AlarmScreen() {
       };
 
       fetchAgendamentoDetails();
-    }, [currentAgendamentoId]) // <-- Agora depende do currentAgendamentoId
+    }, [currentAgendamentoId]) 
   );
 
   const handleRegister = async (tomou: boolean) => {
     try {
       const response = await api.post('/api/registros/', {
-        agendamento: currentAgendamentoId, // <-- ATENÇÃO: Troque agendamentoId por currentAgendamentoId aqui!
+        agendamento: currentAgendamentoId, 
         tomou: tomou,
         data_hora_tomada: new Date().toISOString(),
       });
@@ -100,7 +92,6 @@ export default function AlarmScreen() {
     return <View style={styles.container}><ActivityIndicator size="large" color="#3F7EE4" /></View>;
   }
 
-  // MÁGICA DA VALIDAÇÃO DE ESTOQUE (Continua igual ao seu código...)
   const estoqueAtual = parseFloat(agendamento.medicamento.estoque_atual) || 0;
   const semEstoque = estoqueAtual <= 0;
 
