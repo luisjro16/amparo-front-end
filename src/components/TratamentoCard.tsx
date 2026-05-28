@@ -39,10 +39,10 @@ const TratamentoCard: React.FC<TratamentoCardProps> = ({ medicamento, onEdit, on
           <FontAwesome5 name="pills" size={24} color={isFinished ? '#999' : '#3F7EE4'} style={styles.iconContainer} />
           <View style={styles.infoContainer}>
             <Text style={[styles.medicationName, isFinished && styles.textFinished]}>{medicamento.nome}</Text>
-            <Text style={[styles.dosage, isFinished && styles.textFinished]}>{medicamento.dosagem_formatada}</Text>
+            <Text style={[styles.dosage, isFinished && styles.textFinished]}>{medicamento.dosagem_valor} {medicamento.dosagem_unidade}</Text>
             <Text style={styles.statusText}>{isFinished ? 'Tratamento finalizado' : 'Em andamento'}</Text>
+            </View>
           </View>
-        </View>
       </Swipeable>
     </GestureHandlerRootView>
   );

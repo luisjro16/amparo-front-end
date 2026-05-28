@@ -12,6 +12,7 @@ type AuthContextType = {
   signOut: () => void;
   userToken: string | null;
   isLoading: boolean;
+  checkAndRegisterDoses: () => Promise<void>;
 };
 
 Notifications.setNotificationHandler({
@@ -42,7 +43,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const agendamentos: AgendamentoType[] = agendamentosResponse.data;
       const registros: any[] = registrosResponse.data;
       const agora = new Date();
-      const toleranciaMinutos = 15;
+      const toleranciaMinutos = 1;
 
       for (const ag of agendamentos) {
         if (ag.frequencia !== 'Diário') continue;
@@ -74,6 +75,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const bootstrapAsync = async () => {
       console.log("1. bootstrapAsync: Iniciando verificação de token...");
+      
       try {
         const token = await SecureStore.getItemAsync('accessToken');
         setUserToken(token);
@@ -89,6 +91,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       } catch (e) {
         console.error('ERRO CRÍTICO no bootstrapAsync:', e);
         setUserToken(null);
+        await SecureStore.deleteItemAsync('accessToken');
+        await SecureStore.deleteItemAsync('refreshToken');
       } finally {
         console.log("6. bootstrapAsync: Finalizando, setIsLoading(false).");
         setIsLoading(false);
@@ -146,8 +150,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         await SecureStore.deleteItemAsync('refreshToken');
         setUserToken(null);
       },
+      checkAndRegisterDoses,
     }),
-    [isLoading, userToken]
+    [isLoading, userToken, checkAndRegisterDoses]
   );
 
   return (

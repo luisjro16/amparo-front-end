@@ -11,6 +11,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
     borderTopLeftRadius: 20,
     padding: 20,
+    paddingBottom: 40,
   },
   modalButton: {
     backgroundColor: '#558DC2',
@@ -20,9 +21,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalButtonText: {
-      color: '#fff',
-      fontSize: 16,
-      fontWeight: 'bold',
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   wrapper: {
     flex: 1,
@@ -44,11 +45,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#558DC2',
     borderRadius: 8,
-    padding: 10,
+    padding: 12,
     marginBottom: 20,
     backgroundColor: '#f0f4f8',
     fontSize: 14,
     justifyContent: 'center',
+    minHeight: 48, 
   },
   button: {
     backgroundColor: '#558DC2',
@@ -73,8 +75,38 @@ const styles = StyleSheet.create({
   },
   dosagemUnidadeInput: {
     flex: 1,
+  },
+  labelField: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#333',
+    marginBottom: 8,
+    marginTop: 4,
+  },
+  sectionDividerText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#558DC2',
+    marginTop: 15,
+    marginBottom: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f4f8',
+    paddingBottom: 5,
+  },
+  estoqueInfoBox: {
+    padding: 15,
+    borderRadius: 8,
+    marginBottom: 20,
+    borderWidth: 1,
+  },
+  estoqueOk: {
+    backgroundColor: '#d4edda',
+    borderColor: '#c3e6cb',
+  },
+  estoqueAviso: {
+    backgroundColor: '#fff3cd',
+    borderColor: '#ffeeba',
   }
 });
 
 export default styles;
-

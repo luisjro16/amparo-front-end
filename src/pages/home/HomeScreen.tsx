@@ -17,12 +17,19 @@ import MedicationGroupCard from '../../components/MedicacaoGroupCard'
 
 type HomeScreenProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
-export interface MedicamentoType {
+interface MedicamentoType {
   id: number;
   nome: string;
-  dosagem_formatada: string;
-  observacao: string;
+  dosagem_valor: string;
+  dosagem_unidade: string;
+  observacao: string | null;
+  estoque_atual: string;
+  aviso_estoque_minimo: string;
   is_active: boolean;
+  horario_inicio: string | null;
+  horario_fim: string | null;
+  intervalo: number | null;
+  duracao_valor: number | null;
 }
 
 export interface AgendamentoType {
@@ -156,7 +163,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
       <MedicationGroupCard
         key={grupo.id} 
         nomeMedicamento={grupo.nome}
-        dosagem={grupo.dosagem_formatada}
+        dosagem={grupo.dosagem_valor + ' ' + grupo.dosagem_unidade}
         proximoHorario={grupo.proximoHorario}
         outrosHorarios={grupo.outrosHorarios}
         estaraFinalizado={grupo.estaraFinalizado}
