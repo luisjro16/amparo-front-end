@@ -9,6 +9,9 @@ import HistoricoRecordCard from '../../components/HistoricoCard';
 import LogoAmparo from '../../assets/LogoAmparoPreto.png';
 import styles from './styles'; 
 import BottomNavigationBar from '../../components/BottomNavigationBar';
+import { useAuth } from '../../contexts/AuthContext';
+import * as Notifications from 'expo-notifications';
+import { notificarEstoqueBaixo } from '../../services/notificacao';
 
 
 type RegistroType = any; 
@@ -21,10 +24,12 @@ export default function HistoricoScreen() {
   const [selectedRecord, setSelectedRecord] = useState<RegistroType | null>(null);
   const [editHour, setEditHour] = useState('');
   const [editMinute, setEditMinute] = useState('');
+  const { checkAndRegisterDoses } = useAuth();
 
   const fetchHistorico = async () => {
     try {
       setLoading(true);
+      await checkAndRegisterDoses();
       const response = await api.get('/api/registros/');
       setRegistros(response.data);
     } catch (error) {
@@ -79,7 +84,6 @@ export default function HistoricoScreen() {
   const handleUpdateRecord = async (tomou: boolean) => {
     if (!selectedRecord) return;
 
-    // --- LÓGICA DE VALIDAÇÃO E CONSTRUÇÃO DA DATA ---
     const hour = parseInt(editHour, 10);
     const minute = parseInt(editMinute, 10);
 
@@ -88,7 +92,6 @@ export default function HistoricoScreen() {
       return;
     }
 
-    // Pega a data original e atualiza apenas a hora e o minuto
     const originalDate = parseISO(selectedRecord.data_hora_tomada);
     const finalDate = set(originalDate, { hours: hour, minutes: minute });
 
@@ -100,8 +103,21 @@ export default function HistoricoScreen() {
     try {
       setLoading(true);
       const response = await api.patch(`/api/registros/${selectedRecord.id}/`, payload);
+
       setRegistros(prev => prev.map(r => r.id === selectedRecord.id ? response.data : r));
       handleCloseModal();
+
+      if (tomou) {
+        const medId = response.data.agendamento.medicamento;
+        const estoqueAtual = parseFloat(medId.estoque_atual);
+        const avisoMinimo = parseInt(medId.aviso_estoque_minimo, 10);
+        const nomeMed = medId.nome;
+
+        if (estoqueAtual <= avisoMinimo) {
+          await notificarEstoqueBaixo(nomeMed, estoqueAtual);
+        }
+      }
+
       Alert.alert("Sucesso", "Registro atualizado!");
     } catch (error) {
       console.error("Erro ao atualizar registro:", error);

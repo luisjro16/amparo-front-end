@@ -13,7 +13,7 @@ import HomeScreen from './src/pages/home/HomeScreen';
 import CadastroMedicamentos from './src/pages/cadastrar-medicamentos/Cadastro';  
 import CadastroUsuario from './src/pages/cadastro-usuarios/CadastroScreen';    
 import ConfiguracaoScreen from './src/pages/configuracao/ConfiguracaoScreen';
-import AlarmScreen from './src/pages/alarme/AlarmeScreen';
+import AlarmScreen from './src/pages/Alarme/AlarmeScreen';
 import GerenciamentoScreen from './src/pages/gerenciamento/GerenciamentoScreen';
 import HistoricoScreen from './src/pages/historico/HistoricoScreen';
 

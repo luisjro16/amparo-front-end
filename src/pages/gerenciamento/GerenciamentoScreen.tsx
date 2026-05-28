@@ -7,14 +7,22 @@ import Header from '../../components/Header';
 import LogoAmparo from '../../assets/LogoAmparoPreto.png';
 import BottomNavigationBar from '../../components/BottomNavigationBar';
 import styles from './styles'; 
+import { limparAlarmesAntigos } from '../../services/notificacao';
 
 
 interface Medicamento {
   id: number;
   nome: string;
-  dosagem_formatada: string;
+  dosagem_valor: string;
+  dosagem_unidade: string;
+  observacao: string | null;
+  estoque_atual: string;
+  aviso_estoque_minimo: string;
   is_active: boolean;
-  agendamentos: { data_fim: string | null }[];
+  horario_inicio: string | null;
+  horario_fim: string | null;
+  intervalo: number | null;
+  duracao_valor: number | null;
 }
 
 export default function GerenciamentoScreen({ navigation }: any) {
@@ -32,6 +40,7 @@ export default function GerenciamentoScreen({ navigation }: any) {
     } finally {
       setLoading(false);
     }
+    console.log("Tratamentos carregados:", medicamentos);
   };
 
   useFocusEffect(
@@ -44,7 +53,7 @@ export default function GerenciamentoScreen({ navigation }: any) {
     navigation.navigate('CadastroMedicamento', { isEditing: true, medicamentoData: medicamento });
   };
 
-  const handleDelete = (medicamentoId: number) => {
+  const handleDelete = (medicamento: Medicamento) => {
     Alert.alert(
       "Excluir Tratamento",
       "Isso irá apagar este medicamento e todos os seus lembretes permanentemente. Deseja continuar?",
@@ -55,9 +64,9 @@ export default function GerenciamentoScreen({ navigation }: any) {
           style: "destructive", 
           onPress: async () => {
             try {
-              await api.delete(`/api/medicamentos/${medicamentoId}/`);
-              // Atualiza a UI imediatamente removendo o item da lista
-              setMedicamentos(prev => prev.filter(m => m.id !== medicamentoId));
+              await limparAlarmesAntigos(medicamento.nome);
+              await api.delete(`/api/medicamentos/${medicamento.id}/`);
+              setMedicamentos(prev => prev.filter(m => m.id !== medicamento.id));
             } catch (error) {
               Alert.alert("Erro", "Não foi possível excluir o tratamento.");
             }
@@ -87,7 +96,7 @@ export default function GerenciamentoScreen({ navigation }: any) {
             <TreatmentCard
               medicamento={item}
               onEdit={() => handleEdit(item)}
-              onDelete={() => handleDelete(item.id)}
+              onDelete={() => handleDelete(item)}
             />
           )}
           

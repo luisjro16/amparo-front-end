@@ -1,16 +1,30 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Platform, Alert, Modal, ActivityIndicator } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
-import { addHours, format, set } from 'date-fns';
+import { addHours, format, set, parse } from 'date-fns';
 import styles from './style';
 import axios from 'axios'
 import * as SecureStore from 'expo-secure-store'
-import { scheduleReminder } from '../../services/notificacao';
+import { scheduleReminder, limparAlarmesAntigos } from '../../services/notificacao';
 import { AgendamentoType} from '../home/HomeScreen';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../../App'; 
 import { useRoute } from '@react-navigation/native';
+import { 
+  View, 
+  Text, 
+  TextInput, 
+  TouchableOpacity, 
+  StyleSheet, 
+  Platform, 
+  Alert, 
+  Modal, 
+  ActivityIndicator,
+  Keyboard, 
+  TouchableWithoutFeedback, 
+  KeyboardAvoidingView,
+  ScrollView 
+} from 'react-native';
 
 
 import Header from '../../components/Header';
@@ -21,13 +35,15 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 type MedicamentoFormData = {
   nome: string;
   horario_inicio: Date;
-  horario_fim?: Date | null; 
+  horario_fim: Date | null; 
   intervalo: string ;
   duracao_valor: string;
   duracao_unidade: 'dias' ;
   dosagem_valor: string;
   dosagem_unidade: 'mg' | 'g' | 'ml' | 'gotas' | 'comprimido(s)' | 'cápsula(s)'
   observacao: string;
+  estoque_atual: string;
+  aviso_estoque_minimo: string;
 };
 
 
@@ -45,14 +61,24 @@ export default function CadastrarMedicamento({ navigation }: CadastroScreenProps
 
   const [formData, setFormData] = useState<MedicamentoFormData>({
     nome: initialData?.nome || '',
-    horario_inicio: initialData?.horario_inicio || new Date(),
-    horario_fim: initialData?.horario_fim || null,
-    intervalo: initialData?.intervalo || '',
-    duracao_valor: initialData?.duracao_valor || '',
-    duracao_unidade: initialData?.duracao_unidade || 'dias',
-    dosagem_valor: initialData?.dosagem_valor || '',
+    
+    horario_inicio: initialData?.horario_inicio 
+      ? parse(initialData.horario_inicio, 'HH:mm:ss', new Date()) 
+      : new Date(),
+      
+    horario_fim: initialData?.horario_fim 
+      ? parse(initialData.horario_fim, 'HH:mm:ss', new Date()) 
+      : null,
+      
+    intervalo: initialData?.intervalo ? String(initialData.intervalo) : '',
+    duracao_valor: initialData?.duracao_valor ? String(initialData.duracao_valor) : '',
+    duracao_unidade: 'dias',
+    
+    dosagem_valor: initialData?.dosagem_valor ? String(parseFloat(initialData.dosagem_valor)) : '',
     dosagem_unidade: initialData?.dosagem_unidade || 'mg',
     observacao: initialData?.observacao || '',
+    estoque_atual: initialData?.estoque_atual ? String(parseFloat(initialData.estoque_atual)) : '',
+    aviso_estoque_minimo: initialData?.aviso_estoque_minimo ? String(initialData.aviso_estoque_minimo) : '',
   });
 
   const handleInputChange = (field: keyof MedicamentoFormData, value: any) => {
@@ -68,6 +94,45 @@ export default function CadastrarMedicamento({ navigation }: CadastroScreenProps
     setShowEndTimePicker(Platform.OS === 'ios');
     if (selectedDate) handleInputChange('horario_fim', selectedDate);
   };
+
+  const estimativaEstoque = () => {
+    const intervaloNum = parseInt(formData.intervalo, 10);
+    const dosesPorDia = intervaloNum ? Math.floor(24 / intervaloNum) : 0;
+    
+    const estoque = formData.estoque_atual ? parseInt(formData.estoque_atual, 10) : 0;
+    const duracaoTratamentoDias = formData.duracao_valor ? parseInt(formData.duracao_valor, 10) : null;
+    
+    let qtdPorDose = formData.dosagem_valor ? parseFloat(formData.dosagem_valor) : 0;
+    
+    if (formData.dosagem_unidade === 'mg' || formData.dosagem_unidade === 'g') {
+      if (qtdPorDose > 0) {
+        qtdPorDose = 1; 
+      }
+    }
+
+    if (
+      isNaN(dosesPorDia) || dosesPorDia <= 0 || 
+      isNaN(qtdPorDose) || qtdPorDose <= 0 || 
+      isNaN(estoque) || estoque <= 0
+    ) {
+      return null;
+    }
+
+    const consumoDiario = dosesPorDia * qtdPorDose;
+    const duracaoEstoqueDias = Math.floor(estoque / consumoDiario);
+
+    let status = 'ok';
+    let mensagem = `Seu estoque atual vai durar aproximadamente ${duracaoEstoqueDias} dias.`;
+
+    if (duracaoTratamentoDias && duracaoEstoqueDias < duracaoTratamentoDias) {
+      status = 'aviso';
+      mensagem = `Seu estoque dura ${duracaoEstoqueDias} dias, mas o tratamento dura ${duracaoTratamentoDias} dias. Você precisará comprar mais!`;
+    }
+
+    return { duracaoEstoqueDias, message: mensagem, status };
+  };
+
+  const infoEstoque = estimativaEstoque();
 
   const confirmIOSTime = () => {
     setShowStartTimePicker(false);
@@ -137,11 +202,14 @@ export default function CadastrarMedicamento({ navigation }: CadastroScreenProps
         horario_fim: formData.horario_fim ? format(formData.horario_fim, 'HH:mm:ss') : null,
         intervalo: intervaloNum,
         duracao_valor: duracaoNum,
+        aviso_estoque_minimo: formData.aviso_estoque_minimo,
+        estoque_atual: formData.estoque_atual,
       };
 
       let response;
       if(isEditing){
-        response = await axios.put(`${apiUrl}/api/medicamentos/${initialData.id}`, payload, {
+        await limparAlarmesAntigos(initialData.nome);
+        response = await axios.put(`${apiUrl}/api/medicamentos/${initialData.id}/`, payload, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -181,8 +249,15 @@ export default function CadastrarMedicamento({ navigation }: CadastroScreenProps
   };
 
   return (
-    <View style={styles.wrapper}>
-      <View style={styles.container}>
+    <KeyboardAvoidingView 
+      style={styles.wrapper} 
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
+      <ScrollView
+        style={{ flex: 1 }} 
+        contentContainerStyle={[styles.container, { paddingBottom: 120 }]}
+        keyboardShouldPersistTaps="handled" 
+      >
         <Header logoSource={LogoAmparo} />
         <Text style={styles.title}>{isEditing ? 'Editar Tratamento' : 'Cadastrar Medicamento'}</Text>
 
@@ -195,12 +270,10 @@ export default function CadastrarMedicamento({ navigation }: CadastroScreenProps
         />
         
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-            
             <TouchableOpacity onPress={() => setShowStartTimePicker(true)} style={[styles.input, { flex: 1, marginRight: 10 }]}>
                 <Text>{`Início: ${format(formData.horario_inicio, 'HH:mm')}`}</Text>
             </TouchableOpacity>
 
-            
             <TouchableOpacity onPress={() => setShowEndTimePicker(true)} style={[styles.input, { flex: 1 }]}>
                 <Text style={{ color: formData.horario_fim ? '#000' : '#999' }}>
                     {formData.horario_fim ? `Fim: ${format(formData.horario_fim, 'HH:mm')}` : 'Fim (Opcional)'}
@@ -208,83 +281,47 @@ export default function CadastrarMedicamento({ navigation }: CadastroScreenProps
             </TouchableOpacity>
         </View>
 
-        {Platform.OS === 'android' && showStartTimePicker && (
-          <DateTimePicker
-            value={formData.horario_inicio}
-            mode="time"
-            is24Hour={true}
-            display="default"
-            onChange={onChangeStartTime}
-          />
+        {Platform.OS === 'ios' && (showStartTimePicker || showEndTimePicker) && (
+          <Modal transparent={true} animationType="slide" visible={true}>
+            <TouchableWithoutFeedback onPress={() => { setShowStartTimePicker(false); setShowEndTimePicker(false); }}>
+              <View style={styles.modalContainer}>
+                <TouchableWithoutFeedback>
+                  <View style={styles.modalContent}>
+                    <DateTimePicker
+                      value={showStartTimePicker ? formData.horario_inicio : (formData.horario_fim || new Date())}
+                      mode="time"
+                      is24Hour={true}
+                      textColor='black'
+                      display="spinner" 
+                      onChange={showStartTimePicker ? onChangeStartTime : onChangeEndTime}
+                    />
+                    <TouchableOpacity 
+                      style={styles.modalButton} 
+                      onPress={() => { setShowStartTimePicker(false); setShowEndTimePicker(false); }}
+                    >
+                      <Text style={styles.modalButtonText}>Confirmar</Text>
+                    </TouchableOpacity>
+                  </View>
+                </TouchableWithoutFeedback>
+              </View>
+            </TouchableWithoutFeedback>
+          </Modal>
         )}
 
-        {Platform.OS === 'android' && showEndTimePicker && (
-          <DateTimePicker
-            value={formData.horario_fim || new Date()}
-            mode="time"
-            is24Hour={true}
-            display="default"
-            onChange={onChangeEndTime}
-          />
-        )}
-
-        {Platform.OS === 'ios' && showStartTimePicker && (
-            <Modal
-                transparent={true}
-                animationType="slide"
-                visible={showStartTimePicker}
-                onRequestClose={() => setShowStartTimePicker(false)}
-            >
-                <View style={styles.modalContainer}>
-                    <View style={styles.modalContent}>
-                        <DateTimePicker
-                            value={formData.horario_inicio}
-                            mode="time"
-                            is24Hour={true}
-                            textColor='black'
-                            display="spinner" 
-                            onChange={onChangeStartTime}
-                        />
-                        <TouchableOpacity style={styles.modalButton} onPress={confirmIOSTime}>
-                            <Text style={styles.modalButtonText}>Confirmar</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            </Modal>
-        )}
-
-        {Platform.OS === 'ios' && showEndTimePicker && (
-            <Modal
-                transparent={true}
-                animationType="slide"
-                visible={showEndTimePicker}
-                onRequestClose={() => setShowEndTimePicker(false)}
-            >
-                <View style={styles.modalContainer}>
-                    <View style={styles.modalContent}>
-                        <DateTimePicker
-                            value={formData.horario_fim || new Date()}
-                            mode="time"
-                            is24Hour={true}
-                            textColor='black'
-                            display="spinner" 
-                            onChange={onChangeEndTime}
-                        />
-                        <TouchableOpacity style={styles.modalButton} onPress={confirmIOSTime}>
-                            <Text style={styles.modalButtonText}>Confirmar</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            </Modal>
-        )}
-
-        <TextInput
-          placeholder="Intervalo (a cada X horas)"
-          placeholderTextColor="black"
+        <RNPickerSelect
+          placeholder={{ label: 'Selecione o intervalo...', value: null }}
+          items={[
+            { label: 'A cada 4 horas', value: '4' },
+            { label: 'A cada 6 horas', value: '6' },
+            { label: 'A cada 8 horas', value: '8' },
+            { label: 'A cada 12 horas', value: '12' },
+            { label: 'Uma vez ao dia (24 horas)', value: '24' },
+          ]}
+          onValueChange={(value) => handleInputChange('intervalo', value)}
           value={formData.intervalo}
-          onChangeText={(value) => handleInputChange('intervalo', value)}
-          style={styles.input}
-          keyboardType="number-pad"
+          style={pickerSelectStyles}
+          useNativeAndroidPickerStyle={false}
+          Icon={() => <AntDesign name="down" size={14} color="gray" style={{ right: 10, top: 15 }} />}
         />
 
         <TextInput
@@ -321,12 +358,37 @@ export default function CadastrarMedicamento({ navigation }: CadastroScreenProps
               value={formData.dosagem_unidade}
               style={pickerSelectStyles}
               useNativeAndroidPickerStyle={false}
-              Icon={() => {
-                  return <AntDesign name="down" size={16} color="gray" style={{ paddingRight: 10, paddingTop: 12 }} />;
-              }}
+              Icon={() => <AntDesign name="down" size={16} color="gray" style={{ paddingRight: 10, paddingTop: 12 }} />}
             />
           </View>
         </View>
+        
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <TextInput
+            placeholder="Qtd. atual no estoque"
+            placeholderTextColor="gray"
+            value={formData.estoque_atual}
+            onChangeText={(value) => handleInputChange('estoque_atual', value)}
+            style={[styles.input, { flex: 1, marginRight: 10 }]}
+            keyboardType="number-pad"
+          />
+          <TextInput
+            placeholder="Preocupar se restarem"
+            placeholderTextColor="gray"
+            value={formData.aviso_estoque_minimo}
+            onChangeText={(value) => handleInputChange('aviso_estoque_minimo', value)}
+            style={[styles.input, { flex: 1 }]}
+            keyboardType="number-pad"
+          />
+        </View>
+
+        {infoEstoque && (
+          <View style={[styles.estoqueInfoBox, infoEstoque.status === 'aviso' ? styles.estoqueAviso : styles.estoqueOk]}>
+            <Text style={{ color: infoEstoque.status === 'aviso' ? '#856404' : '#155724', fontWeight: 'bold' }}>
+              {infoEstoque.message}
+            </Text>
+          </View>
+        )}
 
         <TextInput
           placeholder="Observação"
@@ -335,17 +397,14 @@ export default function CadastrarMedicamento({ navigation }: CadastroScreenProps
           onChangeText={(value) => handleInputChange('observacao', value)}
           style={styles.input}
         />
-        
 
         <TouchableOpacity style={styles.button} onPress={handleSave} disabled={loading}>
           {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>{isEditing ? 'ATUALIZAR' : 'SALVAR'}</Text>}
         </TouchableOpacity>
-      </View>
+      </ScrollView>
 
-      <BottomNavigationBar
-        activeTab="add"
-      />
-    </View>
+      <BottomNavigationBar activeTab="add" />
+    </KeyboardAvoidingView>
   );
 }
 
