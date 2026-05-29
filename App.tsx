@@ -4,6 +4,7 @@ import React, {useState, useEffect, useRef} from 'react';
 import { NavigationContainer, useNavigationContainerRef } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AuthProvider, useAuth } from './src/contexts/AuthContext';
+import { AccessibilityProvider } from './src/contexts/AccessibilityContext';
 import * as Notifications from 'expo-notifications';
 import { useNavigation } from '@react-navigation/native';
 
@@ -87,8 +88,10 @@ const AppNavigator = () => {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <AppNavigator />
-    </AuthProvider>
+    <AccessibilityProvider>
+      <AuthProvider>
+        <AppNavigator />
+      </AuthProvider>
+    </AccessibilityProvider>
   );
 }
