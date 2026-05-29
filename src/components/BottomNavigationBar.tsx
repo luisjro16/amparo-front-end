@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Feather from '@expo/vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../App'; 
+import { RootStackParamList } from '../../App';
+import { useAccessibility } from '../contexts/AccessibilityContext';
 
 interface BottomNavigationBarProps {
   activeTab: 'calendar' | 'search' | 'add' | 'timer' | 'settings';
@@ -12,74 +13,54 @@ interface BottomNavigationBarProps {
 
 const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({ activeTab }) => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const { colors } = useAccessibility();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
 
-  const getIconColor = (tabName: string) => {
-    return activeTab === tabName ? '#fff' : '#A9D6FF';
-  };
+  const iconColor = (tab: string) =>
+    activeTab === tab ? colors.navBarIconActive : colors.navBarIcon;
 
   return (
     <View style={styles.container}>
-
       <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('Home')}>
-        <MaterialCommunityIcons
-          name="calendar-month"
-          size={28}
-          color={getIconColor('calendar')}
-        />
+        <MaterialCommunityIcons name="calendar-month" size={28} color={iconColor('calendar')} />
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('Gerenciamento')}>
-        <MaterialCommunityIcons
-          name="text-box-search-outline"
-          size={28}
-          color={getIconColor('search')}
-        />
+        <MaterialCommunityIcons name="text-box-search-outline" size={28} color={iconColor('search')} />
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('CadastroMedicamento')}>
-        <Feather
-          name="plus"
-          size={38} 
-          color={getIconColor('add')} 
-        />
+        <Feather name="plus" size={38} color={iconColor('add')} />
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('Historico')}>
-        <MaterialCommunityIcons
-          name="clock-time-four-outline"
-          size={28}
-          color={getIconColor('timer')}
-        />
+        <MaterialCommunityIcons name="clock-time-four-outline" size={28} color={iconColor('timer')} />
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('Configuracao')}>
-        <MaterialCommunityIcons
-          name="cog"
-          size={28}
-          color={getIconColor('settings')}
-        />
+        <MaterialCommunityIcons name="cog" size={28} color={iconColor('settings')} />
       </TouchableOpacity>
     </View>
   );
 };
 
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    backgroundColor: '#558DC2',
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 80, 
-    paddingBottom: 10, 
-  },
-  iconButton: {
-    padding: 10,
-  },
-});
+const makeStyles = (colors: any) =>
+  StyleSheet.create({
+    container: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      alignItems: 'center',
+      backgroundColor: colors.navBar,
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      height: 80,
+      paddingBottom: 10,
+    },
+    iconButton: {
+      padding: 10,
+    },
+  });
 
 export default BottomNavigationBar;

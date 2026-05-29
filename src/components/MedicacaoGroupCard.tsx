@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { MaterialCommunityIcons, FontAwesome5 } from '@expo/vector-icons'; 
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { useAccessibility } from '../contexts/AccessibilityContext';
 
 type MedicacaoGroupCardProps = {
   nomeMedicamento: string;
@@ -21,27 +22,39 @@ const MedicacaoGroupCard: React.FC<MedicacaoGroupCardProps> = ({
   estaraFinalizado,
   dataFim,
 }) => {
+  const { colors, fontScale } = useAccessibility();
+  const styles = useMemo(() => makeStyles(colors, fontScale), [colors, fontScale]);
+
   return (
     <View style={[styles.card, estaraFinalizado && styles.cardFinished]}>
-      
       <View style={styles.row}>
-        <Text style={[styles.medicationText, estaraFinalizado && styles.textFinished]}>{nomeMedicamento}</Text>
-        <Text style={[styles.dosageText, estaraFinalizado && styles.textFinished]}> - {dosagem}</Text>
+        <Text style={[styles.medicationText, estaraFinalizado && styles.textFinished]}>
+          {nomeMedicamento}
+        </Text>
+        <Text style={[styles.dosageText, estaraFinalizado && styles.textFinished]}>
+          {' '}
+          - {dosagem}
+        </Text>
       </View>
 
       {estaraFinalizado ? (
-        
         <View style={[styles.row, { marginTop: 8 }]}>
-           <MaterialCommunityIcons name="check-circle" size={20} color="#616161" style={styles.icon} />
-           <Text style={styles.finishedMessage}>
-             Tratamento finalizado em {dataFim ? format(parseISO(dataFim), 'dd/MM/yyyy', { locale: ptBR }) : ''}
-           </Text>
-       </View>
+          <MaterialCommunityIcons name="check-circle" size={20} color="#616161" style={styles.icon} />
+          <Text style={styles.finishedMessage}>
+            Tratamento finalizado em{' '}
+            {dataFim ? format(parseISO(dataFim), 'dd/MM/yyyy', { locale: ptBR }) : ''}
+          </Text>
+        </View>
       ) : (
         <>
           {proximoHorario && (
             <View style={[styles.row, { marginTop: 8 }]}>
-              <MaterialCommunityIcons name="clock-time-four-outline" size={20} color="#fff" style={styles.icon} />
+              <MaterialCommunityIcons
+                name="clock-time-four-outline"
+                size={20}
+                color={colors.cardBlueSubtext}
+                style={styles.icon}
+              />
               <Text style={styles.detailsText}>Próximo às </Text>
               <Text style={styles.timeText}>{proximoHorario}</Text>
             </View>
@@ -49,17 +62,20 @@ const MedicacaoGroupCard: React.FC<MedicacaoGroupCardProps> = ({
 
           {outrosHorarios.length > 0 && (
             <View style={[styles.row, { marginTop: 4 }]}>
-                <View style={{ width: 20, marginRight: 8 }} /> 
-                <Text style={styles.footerText}>
-                    Também às {outrosHorarios.join(', ')}
-                </Text>
+              <View style={{ width: 20, marginRight: 8 }} />
+              <Text style={styles.footerText}>Também às {outrosHorarios.join(', ')}</Text>
             </View>
           )}
 
           {!proximoHorario && (
-             <View style={[styles.row, { marginTop: 8 }]}>
-                <MaterialCommunityIcons name="check-circle-outline" size={20} color="#A9D6FF" style={styles.icon} />
-                <Text style={styles.allTakenText}>Nenhum lembrete futuro para hoje.</Text>
+            <View style={[styles.row, { marginTop: 8 }]}>
+              <MaterialCommunityIcons
+                name="check-circle-outline"
+                size={20}
+                color={colors.cardBlueSubtext}
+                style={styles.icon}
+              />
+              <Text style={styles.allTakenText}>Nenhum lembrete futuro para hoje.</Text>
             </View>
           )}
         </>
@@ -68,66 +84,66 @@ const MedicacaoGroupCard: React.FC<MedicacaoGroupCardProps> = ({
   );
 };
 
-
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: 'rgba(79, 131, 217, 1)',
-    borderRadius: 10,
-    marginBottom: 12,
-    marginHorizontal: 16,
-    padding: 15,
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-  },
-  cardFinished: {
-    backgroundColor: '#E0E0E0',
-  },
-  textFinished: {
-      color: '#616161', 
-  },
-  finishedMessage: {
+const makeStyles = (colors: any, fontScale: number) =>
+  StyleSheet.create({
+    card: {
+      backgroundColor: colors.cardBlue,
+      borderRadius: 10,
+      marginBottom: 12,
+      marginHorizontal: 16,
+      padding: 15,
+      elevation: 3,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.2,
+      shadowRadius: 2,
+    },
+    cardFinished: {
+      backgroundColor: colors.border,
+    },
+    textFinished: {
+      color: '#616161',
+    },
+    finishedMessage: {
       color: '#424242',
-      fontSize: 14,
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  icon: {
-    marginRight: 8,
-  },
-  medicationText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  dosageText: {
-    color: '#E0EFFF',
-    fontSize: 16,
-    fontWeight: '500',
-  },
-  detailsText: {
-    color: '#A9D6FF',
-    fontSize: 14,
-  },
-  timeText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  footerText: {
-    color: '#A9D6FF',
-    fontSize: 12,
-    fontStyle: 'italic',
-  },
-  allTakenText: {
-      color: '#A9D6FF',
-      fontSize: 14,
+      fontSize: 14 * fontScale,
+    },
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    icon: {
+      marginRight: 8,
+    },
+    medicationText: {
+      color: colors.cardBlueText,
+      fontSize: 18 * fontScale,
+      fontWeight: 'bold',
+    },
+    dosageText: {
+      color: colors.cardBlueSubtext,
+      fontSize: 16 * fontScale,
+      fontWeight: '500',
+    },
+    detailsText: {
+      color: colors.cardBlueSubtext,
+      fontSize: 14 * fontScale,
+    },
+    timeText: {
+      color: colors.cardBlueText,
+      fontSize: 16 * fontScale,
+      fontWeight: 'bold',
+    },
+    footerText: {
+      color: colors.cardBlueSubtext,
+      fontSize: 12 * fontScale,
       fontStyle: 'italic',
-  }
-});
+    },
+    allTakenText: {
+      color: colors.cardBlueSubtext,
+      fontSize: 14 * fontScale,
+      fontStyle: 'italic',
+    },
+  });
 
 export default MedicacaoGroupCard;

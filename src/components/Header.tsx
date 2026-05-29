@@ -1,16 +1,20 @@
-import React from 'react';
-import { View, Image, StyleSheet, SafeAreaView, StatusBar, ImageSourcePropType } from 'react-native';
+import React, { useMemo } from 'react';
+import { View, Image, StyleSheet, SafeAreaView, StatusBar } from 'react-native';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
-import HeaderLogo from '../assets/LogoAmparoPreto.png'
+import { useAccessibility } from '../contexts/AccessibilityContext';
+import HeaderLogo from '../assets/LogoAmparoPreto.png';
 
 interface HeaderProps {
-  logoSource: any
+  logoSource?: any;
 }
 
 const Header: React.FC<HeaderProps> = () => {
+  const { colors, highContrast } = useAccessibility();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
+
   return (
     <SafeAreaView style={styles.safeArea}>
-      <StatusBar barStyle="dark-content" />
+      <StatusBar barStyle={highContrast ? 'light-content' : 'dark-content'} />
       <View style={styles.container}>
         <Image source={HeaderLogo} style={styles.logo} resizeMode="contain" />
       </View>
@@ -18,21 +22,22 @@ const Header: React.FC<HeaderProps> = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    paddingVertical: 10,
-    width: '100%',
-  },
-  logo: {
-    height: 40,
-    width: 100,
-  },
-  safeArea: {
-    backgroundColor: '#fff',
-    paddingTop: getStatusBarHeight(),
-  },
-});
+const makeStyles = (colors: any) =>
+  StyleSheet.create({
+    safeArea: {
+      backgroundColor: colors.surface,
+      paddingTop: getStatusBarHeight(),
+    },
+    container: {
+      alignItems: 'center',
+      backgroundColor: colors.surface,
+      paddingVertical: 10,
+      width: '100%',
+    },
+    logo: {
+      height: 40,
+      width: 100,
+    },
+  });
 
 export default Header;
