@@ -66,15 +66,17 @@ const AppNavigator = () => {
   return (
     <NavigationContainer ref={navigationRef}>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
+        
         {userToken == null ? (
-          
-          <Stack.Screen name="Login" component={LoginScreen} />
+          <>
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="CadastroUsuario" component={CadastroUsuario} />
+          </>
         ) : (
           <>
             <Stack.Screen name="Home" component={HomeScreen} />
             <Stack.Screen name="Configuracao" component={ConfiguracaoScreen} />
             <Stack.Screen name="CadastroMedicamento" component={CadastroMedicamentos} />
-            <Stack.Screen name="CadastroUsuario" component={CadastroUsuario} />
             <Stack.Screen name="Splash" component={Splash} />
             <Stack.Screen name="Alarm" component={AlarmScreen} />
             <Stack.Screen name="Gerenciamento" component={GerenciamentoScreen} />
