@@ -16,8 +16,8 @@ const SettingsRow: React.FC<SettingsRowProps> = ({ label, value, onValueChange }
     <View style={styles.rowContainer}>
       <Text style={styles.label}>{label}</Text>
       <Switch
-        trackColor={{ false: '#767577', true: colors.primaryLight }}
-        thumbColor={value ? colors.primary : '#f4f3f4'}
+        trackColor={{ false: '#555555', true: '#FFD700' }}
+        thumbColor={value ? '#FFFFFF' : '#E0E0E0'}
         ios_backgroundColor="#3e3e3e"
         onValueChange={onValueChange}
         value={value}

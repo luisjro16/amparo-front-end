@@ -321,7 +321,7 @@ export default function CadastrarMedicamento({ navigation }: CadastroScreenProps
           value={formData.intervalo}
           style={pickerSelectStyles}
           useNativeAndroidPickerStyle={false}
-          Icon={() => <AntDesign name="down" size={14} color="gray" style={{ right: 10, top: 15 }} />}
+          Icon={() => <AntDesign name="down" size={20} color="gray" style={{ paddingRight: 10, paddingTop: 15 }} />}
         />
 
         <TextInput
@@ -358,7 +358,7 @@ export default function CadastrarMedicamento({ navigation }: CadastroScreenProps
               value={formData.dosagem_unidade}
               style={pickerSelectStyles}
               useNativeAndroidPickerStyle={false}
-              Icon={() => <AntDesign name="down" size={16} color="gray" style={{ paddingRight: 10, paddingTop: 12 }} />}
+              Icon={() => <AntDesign name="down" size={20} color="gray" style={{ paddingRight: 10, paddingTop: 15 }} />}
             />
           </View>
         </View>
@@ -373,7 +373,7 @@ export default function CadastrarMedicamento({ navigation }: CadastroScreenProps
             keyboardType="number-pad"
           />
           <TextInput
-            placeholder="Preocupar se restarem"
+            placeholder="Notificar ao restar"
             placeholderTextColor="gray"
             value={formData.aviso_estoque_minimo}
             onChangeText={(value) => handleInputChange('aviso_estoque_minimo', value)}
