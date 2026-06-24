@@ -2,6 +2,8 @@ import React, { useMemo } from 'react';
 import { View, Image, StyleSheet, SafeAreaView, StatusBar } from 'react-native';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 import { useAccessibility } from '../contexts/AccessibilityContext';
+import LogoAmparo from '../assets/LogoAmparo.png';
+import LogoAmparoPreto from '../assets/LogoAmparoPreto.png';
 
 interface HeaderProps {
   logoSource?: any;
@@ -15,7 +17,7 @@ const Header: React.FC<HeaderProps> = () => {
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle={highContrast ? 'light-content' : 'dark-content'} />
       <View style={styles.container}>
-        <Image source={highContrast ? require ('../assets/LogoAmparo.png') : require('../assets/LogoAmparoPreto.png')} style={styles.logo} resizeMode="contain" />
+        <Image source={highContrast ? LogoAmparo : LogoAmparoPreto} style={styles.logo} resizeMode="contain" />
       </View>
     </SafeAreaView>
   );
