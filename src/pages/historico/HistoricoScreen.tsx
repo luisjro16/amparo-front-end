@@ -7,7 +7,7 @@ import api from '../../services/api';
 import Header from '../../components/Header';
 import HistoricoRecordCard from '../../components/HistoricoCard';
 import LogoAmparo from '../../assets/LogoAmparoPreto.png';
-import styles from './styles'; 
+import { makeStyles } from './styles'; 
 import BottomNavigationBar from '../../components/BottomNavigationBar';
 import { useAuth } from '../../contexts/AuthContext';
 import * as Notifications from 'expo-notifications';
@@ -25,6 +25,9 @@ export default function HistoricoScreen() {
   const [editHour, setEditHour] = useState('');
   const [editMinute, setEditMinute] = useState('');
   const { checkAndRegisterDoses } = useAuth();
+  
+  const { colors, fontScale } = useAccessibility();
+  const styles = React.useMemo(() => makeStyles(colors, fontScale), [colors, fontScale]);
 
   const fetchHistorico = async () => {
     try {
@@ -133,7 +136,7 @@ export default function HistoricoScreen() {
       <Text style={styles.title}>Histórico de Medicamentos</Text>
 
       {loading ? (
-        <ActivityIndicator size="large" color="#3F7EE4" style={{ flex: 1 }}/>
+        <ActivityIndicator size="large" color={colors.primary} style={{ flex: 1 }}/>
       ) : (
         <SectionList
           sections={groupedRecords}
@@ -172,6 +175,7 @@ export default function HistoricoScreen() {
                     keyboardType="number-pad"
                     maxLength={2}
                     placeholder="HH"
+                    placeholderTextColor={colors.textSecondary}
                 />
                 <Text style={styles.timeInputSeparator}>:</Text>
                 <TextInput
@@ -181,21 +185,22 @@ export default function HistoricoScreen() {
                     keyboardType="number-pad"
                     maxLength={2}
                     placeholder="mm"
+                    placeholderTextColor={colors.textSecondary}
                 />
               </View>
               
               <View style={styles.modalButtonContainer}>
-                <View style={{ backgroundColor: '#3F7EE4', borderRadius: 10, overflow: 'hidden', padding:5}}>
-                  <Button title="Usei" onPress={() => handleUpdateRecord(true)} color="#fff" />
+                <View style={{ backgroundColor: colors.primary, borderRadius: 10, overflow: 'hidden', padding:5}}>
+                  <Button title="Usei" onPress={() => handleUpdateRecord(true)} color={colors.textOnPrimary} />
                 </View>
 
-                <View style={{ backgroundColor: 'orange', borderRadius: 10, overflow: 'hidden', padding:5 }}>
-                  <Button title="Não Usei" onPress={() => handleUpdateRecord(false)} color="#fff" />
+                <View style={{ backgroundColor: colors.error, borderRadius: 10, overflow: 'hidden', padding:5 }}>
+                  <Button title="Não Usei" onPress={() => handleUpdateRecord(false)} color={colors.textOnPrimary} />
                 </View>
               </View>
 
-              <View style={{  backgroundColor: 'gray', borderRadius: 10, overflow: 'hidden', padding:5 }}>
-                <Button title="Cancelar" onPress={handleCloseModal} color="white" />
+              <View style={{  backgroundColor: colors.textSecondary, borderRadius: 10, overflow: 'hidden', padding:5 }}>
+                <Button title="Cancelar" onPress={handleCloseModal} color={colors.textOnPrimary} />
               </View>
             </View>
           </View>

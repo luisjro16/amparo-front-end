@@ -5,6 +5,7 @@ import { FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
 import api from '../../services/api';
 import { format, parseISO } from 'date-fns';
 import { notificarEstoqueBaixo } from '../../services/notificacao';
+import { useAccessibility, ColorPalette } from '../../contexts/AccessibilityContext';
 
 export default function AlarmScreen() {
   const route = useRoute<any>();
@@ -14,6 +15,9 @@ export default function AlarmScreen() {
   const [currentAgendamentoId, setCurrentAgendamentoId] = useState(initialAgendamentoId);
   const [agendamento, setAgendamento] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+
+  const { colors, fontScale, highContrast } = useAccessibility();
+  const styles = React.useMemo(() => makeStyles(colors, fontScale, highContrast), [colors, fontScale, highContrast]);
 
   const agendamentoRef = useRef<any>(null);
 
@@ -89,7 +93,7 @@ export default function AlarmScreen() {
   };
 
   if (loading || !agendamento) {
-    return <View style={styles.container}><ActivityIndicator size="large" color="#3F7EE4" /></View>;
+    return <View style={styles.container}><ActivityIndicator size="large" color={colors.primary} /></View>;
   }
 
   const estoqueAtual = parseFloat(agendamento.medicamento.estoque_atual) || 0;
@@ -98,12 +102,12 @@ export default function AlarmScreen() {
   return (
     <View style={styles.container}>
       {semEstoque ? (
-        <MaterialCommunityIcons name="package-variant-remove" size={80} color="crimson" style={styles.bellIcon} />
+        <MaterialCommunityIcons name="package-variant-remove" size={80} color={colors.error} style={styles.bellIcon} />
       ) : (
-        <FontAwesome5 name="bell" size={80} color="#3F7EE4" style={styles.bellIcon} />
+        <FontAwesome5 name="bell" size={80} color={colors.primary} style={styles.bellIcon} />
       )}
 
-      <Text style={[styles.title, semEstoque && { color: 'crimson' }]}>
+      <Text style={[styles.title, semEstoque && { color: colors.error }]}>
         {semEstoque ? 'Estoque Esgotado!' : 'Hora da Medicação!'}
       </Text>
       
@@ -147,10 +151,10 @@ export default function AlarmScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors: ColorPalette, fontScale: number, highContrast: boolean) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: colors.background,
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,
@@ -159,23 +163,23 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   title: {
-    fontSize: 28,
+    fontSize: 28 * fontScale,
     fontWeight: 'bold',
-    color: '#3F7EE4',
+    color: colors.primary,
   },
   time: {
-    fontSize: 72,
+    fontSize: 72 * fontScale,
     fontWeight: 'bold',
-    color: '#333',
+    color: colors.text,
     marginVertical: 10,
   },
   medication: {
-    fontSize: 24,
-    color: '#555',
+    fontSize: 24 * fontScale,
+    color: colors.textSecondary,
     marginBottom: 60,
   },
   primaryButton: {
-    backgroundColor: '#3F7EE4',
+    backgroundColor: colors.primary,
     width: '80%',
     padding: 20,
     borderRadius: 30,
@@ -183,25 +187,25 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   primaryButtonText: {
-    color: '#fff',
-    fontSize: 18,
+    color: colors.textOnPrimary,
+    fontSize: 18 * fontScale,
     fontWeight: 'bold',
   },
   secondaryButton: {
-    backgroundColor: '#E9E9E9',
+    backgroundColor: colors.inputBackground,
     width: '80%',
     padding: 20,
     borderRadius: 30,
     alignItems: 'center',
   },
   secondaryButtonText: {
-    color: '#555',
-    fontSize: 18,
+    color: colors.text,
+    fontSize: 18 * fontScale,
     fontWeight: 'bold',
   },
   warningBox: {
-    backgroundColor: '#fff3cd',
-    borderColor: '#ffeeba',
+    backgroundColor: highContrast ? '#332200' : '#fff3cd',
+    borderColor: highContrast ? '#443300' : '#ffeeba',
     borderWidth: 1,
     padding: 15,
     borderRadius: 10,
@@ -209,18 +213,18 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   warningText: {
-    color: '#856404',
+    color: highContrast ? '#ffdd99' : '#856404',
     textAlign: 'center',
     fontWeight: '500',
-    fontSize: 14,
+    fontSize: 14 * fontScale,
   },
   linkButton: {
     marginTop: 25,
     padding: 10,
   },
   linkButtonText: {
-    color: '#3F7EE4',
-    fontSize: 16,
+    color: colors.primary,
+    fontSize: 16 * fontScale,
     fontWeight: 'bold',
     textDecorationLine: 'underline',
   }

@@ -1,8 +1,9 @@
 import { StyleSheet } from 'react-native';
+import { ColorPalette } from '../../contexts/AccessibilityContext';
 
-const styles = StyleSheet.create({
+export const makeStyles = (colors: ColorPalette, fontScale: number) => StyleSheet.create({
   container: {
-    backgroundColor: '#f5f5f5',
+    backgroundColor: colors.background,
     flex: 1,
   },
   centerContent: {
@@ -12,8 +13,8 @@ const styles = StyleSheet.create({
       paddingHorizontal: 20,
   },
   title: {
-    color: 'rgba(79, 131, 217, 1)',
-    fontSize: 20,
+    color: colors.primary,
+    fontSize: 20 * fontScale,
     fontWeight: 'bold',
     marginBottom: 10,
     marginLeft: 16,
@@ -21,10 +22,8 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   emptyText: {
-    fontSize: 16,
-    color: '#888',
+    fontSize: 16 * fontScale,
+    color: colors.textSecondary,
     textAlign: 'center',
   },
 });
-
-export default styles;

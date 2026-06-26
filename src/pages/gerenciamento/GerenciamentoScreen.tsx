@@ -6,8 +6,9 @@ import TreatmentCard from '../../components/TratamentoCard';
 import Header from '../../components/Header'; 
 import LogoAmparo from '../../assets/LogoAmparoPreto.png';
 import BottomNavigationBar from '../../components/BottomNavigationBar';
-import styles from './styles'; 
+import { makeStyles } from './styles'; 
 import { limparAlarmesAntigos } from '../../services/notificacao';
+import { useAccessibility } from '../../contexts/AccessibilityContext';
 
 
 interface Medicamento {
@@ -29,6 +30,9 @@ export default function GerenciamentoScreen({ navigation }: any) {
   const [medicamentos, setMedicamentos] = useState<Medicamento[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'calendar' | 'search' | 'add' | 'timer' | 'settings'>('search');
+
+  const { colors, fontScale } = useAccessibility();
+  const styles = React.useMemo(() => makeStyles(colors, fontScale), [colors, fontScale]);
 
   const fetchData = async () => {
     try {
@@ -79,7 +83,7 @@ export default function GerenciamentoScreen({ navigation }: any) {
   if (loading) {
     return (
         <View style={[styles.container, styles.centerContent]}>
-            <ActivityIndicator size="large" color="#3F7EE4" />
+            <ActivityIndicator size="large" color={colors.primary} />
         </View>
     )
   }
