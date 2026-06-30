@@ -1,6 +1,7 @@
 import { Dimensions, StyleSheet } from "react-native";
+import { ColorPalette } from "../../contexts/AccessibilityContext";
 
-export const style = StyleSheet.create({
+export const makeStyles = (colors: ColorPalette, fontScale: number) => StyleSheet.create({
     boxBottom:{
         alignItems:'center',
         height:Dimensions.get('window').height/3,
@@ -10,7 +11,7 @@ export const style = StyleSheet.create({
     },
     boxInput:{
         alignItems:'center',
-        backgroundColor: '#F6F8FA',
+        backgroundColor: colors.inputBackground,
         borderRadius: 20,
         elevation: 10,
         flexDirection:'row',
@@ -42,7 +43,7 @@ export const style = StyleSheet.create({
     },
     button:{
         alignItems:'center',
-        backgroundColor:'#1A5DB2',
+        backgroundColor: colors.primary,
         borderRadius: 24,
         elevation: 6,
         height: 48,
@@ -59,7 +60,7 @@ export const style = StyleSheet.create({
     container:{
         alignContent:'center',
         alignItems:'center',
-        backgroundColor:'#5C9EDC',
+        backgroundColor: colors.primary,
         flex:1,
         justifyContent:'center'
     },
@@ -70,20 +71,20 @@ export const style = StyleSheet.create({
         width: 250,
     },
     textBotton:{
-        color:'#fff',
-        fontSize: 15,
+        color: colors.textOnPrimary,
+        fontSize: 15 * fontScale,
         fontWeight:'bold'
     },
     textButton:{
-        color:'#fff',
-        fontSize: 18,
+        color: colors.textOnPrimary,
+        fontSize: 18 * fontScale,
         fontWeight:'bold',
         letterSpacing: 1,
     },
     textForget:{
         alignSelf:'flex-end',
-        color:'#E9EDF6',
-        fontSize: 15,
+        color: colors.textOnPrimary,
+        fontSize: 15 * fontScale,
         fontWeight:'500',
         marginBottom: 10,
         marginTop: 10,
@@ -104,25 +105,25 @@ export const style = StyleSheet.create({
     rememberMeText: {
         alignSelf: 'flex-start',
         marginLeft: 5,
-        color: "#fff",
-        fontSize: 15,
+        color: colors.textOnPrimary,
+        fontSize: 15 * fontScale,
     },
     textInput:{
         backgroundColor: 'transparent',
-        color: '#222',
+        color: colors.text,
         flex: 1,
-        fontSize: 15,
+        fontSize: 15 * fontScale,
         height:'100%',
         paddingLeft: 5,
     },
     textTitle:{
-        color:'#fff',
+        color: colors.textOnPrimary,
         fontFamily:'inter',
-        fontSize: 18,
+        fontSize: 18 * fontScale,
         fontWeight:'bold',
         letterSpacing: 2,
         marginBottom: 2,
         marginTop: 15,
         paddingLeft: 8,
     }
-})
+});

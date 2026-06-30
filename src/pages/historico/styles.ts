@@ -1,13 +1,14 @@
 import {StyleSheet} from 'react-native';
+import { ColorPalette } from '../../contexts/AccessibilityContext';
 
-const styles = StyleSheet.create({
+export const makeStyles = (colors: ColorPalette, fontScale: number) => StyleSheet.create({
     container: {
-        backgroundColor: '#f5f5f5',
+        backgroundColor: colors.background,
         flex: 1, 
     },
     title: {
-        color: 'rgba(79, 131, 217, 1)',
-        fontSize: 20,
+        color: colors.primary,
+        fontSize: 20 * fontScale,
         fontWeight: 'bold',
         marginBottom: 10,
         marginLeft: 16,
@@ -15,10 +16,10 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     sectionHeader: {
-        fontSize: 18,
+        fontSize: 18 * fontScale,
         fontWeight: 'bold',
-        color: '#3F7EE4',
-        backgroundColor: '#f5f5f5',
+        color: colors.primary,
+        backgroundColor: colors.background,
         paddingVertical: 8,
         paddingHorizontal: 16,
     },
@@ -28,8 +29,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     emptyText: {
-        fontSize: 16,
-        color: '#888',
+        fontSize: 16 * fontScale,
+        color: colors.textSecondary,
     },
     modalOverlay: {
         flex: 1,
@@ -38,30 +39,32 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0,0,0,0.5)',
     },
     modalContent: {
-        backgroundColor: 'white',
+        backgroundColor: colors.surface,
         padding: 20,
         borderRadius: 10,
         width: '70%',
         alignItems: 'center',
     },
     modalTitle: {
-        fontSize: 20,
+        fontSize: 20 * fontScale,
         fontWeight: 'bold',
         marginBottom: 10,
+        color: colors.text,
     },
     modalMedication: {
-        fontSize: 20,
+        fontSize: 20 * fontScale,
         marginBottom: 20,
+        color: colors.text,
     },
     timePickerButton: {
         borderWidth: 1,
-        borderColor: '#558DC2',
+        borderColor: colors.border,
         padding: 10,
         borderRadius: 8,
         marginBottom: 20,
-        backgroundColor: '#f0f4f8',
+        backgroundColor: colors.inputBackground,
         justifyContent: 'center',
-        fontSize: 14,
+        fontSize: 14 * fontScale,
     },
     modalButtonContainer: {
         width: '85%',
@@ -71,8 +74,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     inputLabel: {
-        fontSize: 14,
-        color: '#888',
+        fontSize: 14 * fontScale,
+        color: colors.textSecondary,
         marginBottom: 8,
     },
     timeInputContainer: {
@@ -82,19 +85,20 @@ const styles = StyleSheet.create({
     },
     timeInputBox: {
         borderWidth: 1,
-        borderColor: '#ccc',
+        borderColor: colors.border,
         borderRadius: 8,
         width: 60,
         height: 50,
         textAlign: 'center',
-        fontSize: 20,
+        fontSize: 20 * fontScale,
         fontWeight: 'bold',
+        color: colors.text,
+        backgroundColor: colors.inputBackground,
     },
     timeInputSeparator: {
-        fontSize: 24,
+        fontSize: 24 * fontScale,
         fontWeight: 'bold',
         marginHorizontal: 10,
+        color: colors.text,
     },
 });
-
-export default styles;

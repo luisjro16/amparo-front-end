@@ -1,67 +1,69 @@
 import { StyleSheet } from 'react-native';
+import { ColorPalette } from '../../contexts/AccessibilityContext';
 
-const styles = StyleSheet.create({
+export const makeStyles = (colors: ColorPalette, fontScale: number, highContrast: boolean) => StyleSheet.create({
   modalContainer: {
     flex: 1,
     justifyContent: 'flex-end',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderTopRightRadius: 20,
     borderTopLeftRadius: 20,
     padding: 20,
     paddingBottom: 40,
   },
   modalButton: {
-    backgroundColor: '#558DC2',
+    backgroundColor: colors.primary,
     padding: 15,
     borderRadius: 8,
     marginTop: 10,
     alignItems: 'center',
   },
   modalButtonText: {
-    color: '#fff',
-    fontSize: 16,
+    color: colors.textOnPrimary,
+    fontSize: 16 * fontScale,
     fontWeight: 'bold',
   },
   wrapper: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: colors.background,
   },
   container: {
     paddingHorizontal: 20,
   },
   title: {
-    fontSize: 22,
+    fontSize: 22 * fontScale,
     fontWeight: '500',
     marginVertical: 20,
     textAlign: 'center',
-    color: '#558DC2',
+    color: colors.primary,
     marginBottom: 30,
     marginTop: 30,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#558DC2',
+    borderColor: colors.border,
     borderRadius: 8,
     padding: 12,
     marginBottom: 20,
-    backgroundColor: '#f0f4f8',
-    fontSize: 14,
+    backgroundColor: colors.inputBackground,
+    color: colors.text,
+    fontSize: 14 * fontScale,
     justifyContent: 'center',
     minHeight: 48, 
   },
   button: {
-    backgroundColor: '#558DC2',
+    backgroundColor: colors.primary,
     paddingVertical: 15,
     borderRadius: 8,
     marginTop: 20,
     alignItems: 'center',
   },
   buttonText: {
-    color: '#fff',
-    fontSize: 16,
+    color: colors.textOnPrimary,
+    fontSize: 16 * fontScale,
     fontWeight: 'bold',
   },
   dosagemContainer: {
@@ -77,20 +79,20 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   labelField: {
-    fontSize: 14,
+    fontSize: 14 * fontScale,
     fontWeight: '500',
-    color: '#333',
+    color: colors.text,
     marginBottom: 8,
     marginTop: 4,
   },
   sectionDividerText: {
-    fontSize: 16,
+    fontSize: 16 * fontScale,
     fontWeight: 'bold',
-    color: '#558DC2',
+    color: colors.primary,
     marginTop: 15,
     marginBottom: 15,
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f4f8',
+    borderBottomColor: colors.border,
     paddingBottom: 5,
   },
   estoqueInfoBox: {
@@ -100,13 +102,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   estoqueOk: {
-    backgroundColor: '#d4edda',
-    borderColor: '#c3e6cb',
+    backgroundColor: highContrast ? '#003300' : '#d4edda',
+    borderColor: highContrast ? '#004400' : '#c3e6cb',
   },
   estoqueAviso: {
-    backgroundColor: '#fff3cd',
-    borderColor: '#ffeeba',
+    backgroundColor: highContrast ? '#332200' : '#fff3cd',
+    borderColor: highContrast ? '#443300' : '#ffeeba',
   }
 });
-
-export default styles;

@@ -1,9 +1,10 @@
 import { StyleSheet } from 'react-native';
+import { ColorPalette } from '../../contexts/AccessibilityContext';
 
-const styles = StyleSheet.create({
+export const makeStyles = (colors: ColorPalette, fontScale: number) => StyleSheet.create({
     safeArea: {
       flex: 1,
-      backgroundColor: '#5C9EDC',
+      backgroundColor: colors.primary,
     },
     flex: {
       flex: 1,
@@ -21,26 +22,27 @@ const styles = StyleSheet.create({
       marginTop: 30,
     },
     title: {
-      fontSize: 22,
+      fontSize: 22 * fontScale,
       fontWeight: 'bold',
-      color: '#fff',
+      color: colors.textOnPrimary,
       marginBottom: 20,
     },
     input: {
       width: '90%',
       height: 48,
-      backgroundColor: '#fff',
+      backgroundColor: colors.inputBackground,
+      color: colors.text,
       borderRadius: 8,
       paddingHorizontal: 14,
-      fontSize: 16,
+      fontSize: 16 * fontScale,
       marginBottom: 12,
       elevation: 2,
     },
     label: {
       width: '90%',
-      color: '#fff',
+      color: colors.textOnPrimary,
       fontWeight: 'bold',
-      fontSize: 16,
+      fontSize: 16 * fontScale,
       marginBottom: 6,
       marginTop: 8,
       textAlign: 'left',
@@ -55,31 +57,31 @@ const styles = StyleSheet.create({
     pinBox: {
         width: 50,
         height: 50,
-        backgroundColor: '#fff',
+        backgroundColor: colors.inputBackground,
         borderRadius: 8,
         borderWidth: 1,
-        borderColor: '#ddd',
+        borderColor: colors.border,
         justifyContent: 'center',
         alignItems: 'center',
         elevation: 2,
     },
     pinText: {
-        fontSize: 30,
-        color: '#333',
+        fontSize: 30 * fontScale,
+        color: colors.text,
         textAlign: 'center',
     },
     pinInput: {
       width: '60%',
       height: 48,
-      backgroundColor: '#fff',
+      backgroundColor: colors.inputBackground,
       borderRadius: 8,
       paddingVertical: 10,
-      fontSize: 24,
+      fontSize: 24 * fontScale,
       letterSpacing: 15,
       textAlign: 'center',
       marginBottom: 12,
       elevation: 2,
-      color: '#333', 
+      color: colors.text, 
     },
     keypad: {
       width: '70%',
@@ -98,25 +100,23 @@ const styles = StyleSheet.create({
       alignItems: 'center',
     },
     keypadButtonText: {
-      fontSize: 28,
-      color: '#fff',
+      fontSize: 28 * fontScale,
+      color: colors.textOnPrimary,
       fontWeight: 'bold',
     },
     confirmButton: {
-      backgroundColor: 'rgba(16, 84, 148, 1)',
+      backgroundColor: colors.primary,
       borderRadius: 8,
       marginTop: 15,
       width: '60%',
       paddingVertical: 12,
       alignItems: 'center',
       elevation: 2,
-      minHeight: 48, // Garante altura mínima para o ActivityIndicator
+      minHeight: 48,
     },
     confirmButtonText: {
-      color: '#fff',
-      fontSize: 18,
+      color: colors.textOnPrimary,
+      fontSize: 18 * fontScale,
       fontWeight: 'bold',
     },
 });
-
-export default styles;

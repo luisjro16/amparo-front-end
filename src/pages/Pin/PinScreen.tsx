@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { View, Text, TouchableOpacity, Image, SafeAreaView, StatusBar } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import styles from './styles';
+import { makeStyles } from './styles';
 import logo from '../../assets/LogoAmparo.png';
+import { useAccessibility } from '../../contexts/AccessibilityContext';
 
 const PIN_LENGTH = 4;
 
 export default function PinScreen() {
+  const { colors, fontScale, highContrast } = useAccessibility();
+  const styles = useMemo(() => makeStyles(colors, fontScale), [colors, fontScale]);
   const [pin, setPin] = useState<string>('');
 
   const handlePress = (num: string) => {
@@ -19,7 +22,7 @@ export default function PinScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" />
+      <StatusBar barStyle={highContrast ? 'light-content' : 'dark-content'} />
       <View style={styles.logoContainer}>
         <Image source={logo} style={styles.logo} />
       </View>

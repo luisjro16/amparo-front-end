@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import {
   Text,
   View,
@@ -8,7 +8,7 @@ import {
   Alert,
   ActivityIndicator,
 } from 'react-native';
-import { style } from './style'; 
+import { makeStyles } from './style'; 
 import LogoAmparo from '../../assets/LogoAmparo.png';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Entypo from '@expo/vector-icons/Entypo';
@@ -16,11 +16,14 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack'; 
 import { RootStackParamList } from '../../../App'; 
 import { AuthProvider, useAuth  } from '../../contexts/AuthContext'; 
+import { useAccessibility } from '../../contexts/AccessibilityContext';
 
 type LoginScreenProps = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
 export default function LoginScreen({ navigation }: LoginScreenProps) {
   const { signIn } = useAuth(); 
+  const { colors, fontScale } = useAccessibility();
+  const style = useMemo(() => makeStyles(colors, fontScale), [colors, fontScale]);
 
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
@@ -71,7 +74,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
           <AntDesign
             name='user'
             size={24}
-            color='black'
+            color={colors.text}
           />
         </View>
 
@@ -89,7 +92,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
           <Entypo
             name="eye"
             size={24}
-            color="black"
+            color={colors.text}
           />
         </View>
         <View style={style.rowBetween}>
@@ -101,7 +104,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
             <MaterialIcons
               name={rememberMe ? "check-box" : "check-box-outline-blank"}
               size={20}
-              color="#fff"
+              color={colors.textOnPrimary}
             />
             <Text style={style.rememberMeText}>Lembre-se de mim</Text>
           </TouchableOpacity>

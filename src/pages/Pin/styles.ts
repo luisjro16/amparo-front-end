@@ -1,9 +1,10 @@
 import { StyleSheet } from 'react-native';
+import { ColorPalette } from '../../contexts/AccessibilityContext';
 
-export default StyleSheet.create({
+export const makeStyles = (colors: ColorPalette, fontScale: number) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#5C9EDC',
+    backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'flex-start',
     paddingTop: 60,
@@ -20,9 +21,9 @@ export default StyleSheet.create({
     resizeMode: 'contain',
   },
   subtitle: {
-    color: '#fff',
+    color: colors.textOnPrimary,
     fontWeight: 'bold',
-    fontSize: 23,
+    fontSize: 23 * fontScale,
     marginBottom: 28,
     textAlign: 'center',
   },
@@ -36,7 +37,7 @@ export default StyleSheet.create({
     height: 22,
     borderRadius: 11,
     borderWidth: 2,
-    borderColor: '#fff',
+    borderColor: colors.textOnPrimary,
     margin: 8,
     alignItems: 'center',
     justifyContent: 'center',
@@ -45,7 +46,7 @@ export default StyleSheet.create({
   pinDot: {
     width: 12,
     height: 12,
-    backgroundColor: '#fff',
+    backgroundColor: colors.textOnPrimary,
     borderRadius: 6,
   },
   keypad: {
@@ -63,20 +64,20 @@ export default StyleSheet.create({
     paddingVertical: 12,
   },
   keyText: {
-    fontSize: 28,
-    color: '#fff',
+    fontSize: 28 * fontScale,
+    color: colors.textOnPrimary,
     fontWeight: 'bold',
   },
   eraseText: {
-    fontSize: 12,
-    color: '#fff',
+    fontSize: 12 * fontScale,
+    color: colors.textOnPrimary,
     fontWeight: 'bold',
     textAlign: 'center',
     opacity: 0.8,
   },
   faceid: {
-    fontSize: 26,
-    color: '#fff',
+    fontSize: 26 * fontScale,
+    color: colors.textOnPrimary,
     opacity: 0.8,
   },
 });

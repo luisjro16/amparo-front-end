@@ -15,13 +15,17 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
-import styles from './styles';
+import { makeStyles } from './styles';
+import { useAccessibility } from '../../contexts/AccessibilityContext';
 import LogoAmparo from '../../assets/LogoAmparo.png';
 
 export default function CadastroScreen() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState(''); 
   const [loading, setLoading] = useState(false);
+
+  const { colors, fontScale, highContrast } = useAccessibility();
+  const styles = React.useMemo(() => makeStyles(colors, fontScale), [colors, fontScale]);
 
   const navigation = useNavigation();
 
@@ -102,7 +106,7 @@ export default function CadastroScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <StatusBar barStyle="light-content" />
+      <StatusBar barStyle={highContrast ? 'light-content' : 'dark-content'} />
       <KeyboardAvoidingView
         style={styles.flex}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -120,7 +124,7 @@ export default function CadastroScreen() {
           <TextInput
             style={styles.input}
             placeholder="Digite seu nome de usuário"
-            placeholderTextColor="#999"
+            placeholderTextColor={colors.textSecondary}
             value={username}
             onChangeText={setUsername}
             autoCapitalize="none"
@@ -140,7 +144,7 @@ export default function CadastroScreen() {
                         style={styles.keypadButton}
                         onPress={handleBackspace}
                       >
-                        <Ionicons name="backspace-outline" size={32} color="#FFFFFF" />
+                        <Ionicons name="backspace-outline" size={32} color={colors.textOnPrimary} />
                       </TouchableOpacity>
                     );
                   }

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import RNPickerSelect from 'react-native-picker-select';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { addHours, format, set, parse } from 'date-fns';
-import styles from './style';
+import { makeStyles } from './style';
 import axios from 'axios'
 import * as SecureStore from 'expo-secure-store'
 import { scheduleReminder, limparAlarmesAntigos } from '../../services/notificacao';
@@ -25,6 +25,7 @@ import {
   KeyboardAvoidingView,
   ScrollView 
 } from 'react-native';
+import { useAccessibility } from '../../contexts/AccessibilityContext';
 
 
 import Header from '../../components/Header';
@@ -58,6 +59,21 @@ export default function CadastrarMedicamento({ navigation }: CadastroScreenProps
   const route = useRoute<any>()
   const isEditing = route.params?.isEditing || false
   const initialData = route.params?.medicamentoData || null
+
+  const { colors, fontScale, highContrast } = useAccessibility();
+  const styles = React.useMemo(() => makeStyles(colors, fontScale, highContrast), [colors, fontScale, highContrast]);
+  
+  const pickerSelectStyles = React.useMemo(() => StyleSheet.create({
+    inputIOS: {
+      ...styles.input
+    },
+    inputAndroid: {
+      ...styles.input
+    },
+    placeholder: {
+      color: colors.text,
+    }
+  }), [styles, colors.text]);
 
   const [formData, setFormData] = useState<MedicamentoFormData>({
     nome: initialData?.nome || '',
@@ -263,7 +279,7 @@ export default function CadastrarMedicamento({ navigation }: CadastroScreenProps
 
         <TextInput
           placeholder="Nome do medicamento"
-          placeholderTextColor="black"
+          placeholderTextColor={colors.textSecondary}
           value={formData.nome}
           onChangeText={(value) => handleInputChange('nome', value)}
           style={styles.input}
@@ -326,7 +342,7 @@ export default function CadastrarMedicamento({ navigation }: CadastroScreenProps
 
         <TextInput
           placeholder="Duração do Tratamento (em dias)"
-          placeholderTextColor="black"
+          placeholderTextColor={colors.textSecondary}
           value={formData.duracao_valor}
           onChangeText={(value) => handleInputChange('duracao_valor', value)}
           style={styles.input}
@@ -336,7 +352,7 @@ export default function CadastrarMedicamento({ navigation }: CadastroScreenProps
         <View style={styles.dosagemContainer}>
           <TextInput
             placeholder="Dosagem"
-            placeholderTextColor="black"
+            placeholderTextColor={colors.textSecondary}
             value={formData.dosagem_valor}
             onChangeText={(value) => handleInputChange('dosagem_valor', value)}
             style={[styles.input, styles.dosagemInput]}
@@ -366,7 +382,7 @@ export default function CadastrarMedicamento({ navigation }: CadastroScreenProps
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           <TextInput
             placeholder="Qtd. atual no estoque"
-            placeholderTextColor="gray"
+            placeholderTextColor={colors.textSecondary}
             value={formData.estoque_atual}
             onChangeText={(value) => handleInputChange('estoque_atual', value)}
             style={[styles.input, { flex: 1, marginRight: 10 }]}
@@ -374,7 +390,7 @@ export default function CadastrarMedicamento({ navigation }: CadastroScreenProps
           />
           <TextInput
             placeholder="Notificar ao restar"
-            placeholderTextColor="gray"
+            placeholderTextColor={colors.textSecondary}
             value={formData.aviso_estoque_minimo}
             onChangeText={(value) => handleInputChange('aviso_estoque_minimo', value)}
             style={[styles.input, { flex: 1 }]}
@@ -392,7 +408,7 @@ export default function CadastrarMedicamento({ navigation }: CadastroScreenProps
 
         <TextInput
           placeholder="Observação"
-          placeholderTextColor="black"
+          placeholderTextColor={colors.textSecondary}
           value={formData.observacao}
           onChangeText={(value) => handleInputChange('observacao', value)}
           style={styles.input}
@@ -407,15 +423,3 @@ export default function CadastrarMedicamento({ navigation }: CadastroScreenProps
     </KeyboardAvoidingView>
   );
 }
-
-const pickerSelectStyles = StyleSheet.create({
-  inputIOS: {
-    ...styles.input
-  },
-  inputAndroid: {
-    ...styles.input
-  },
-  placeholder: {
-    color: 'black',
-  }
-});
