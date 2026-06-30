@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, Image, ActivityIndicator } from 'react-native';
 import SplashLogo from '../../assets/LogoAmparo.png';
-import { useAccessibility, ColorPalette } from '../../contexts/AccessibilityContext';
+import { useAccessibility, ColorPalette } from '../contexts/AccessibilityContext';
 
 const Splash = () => {
   const { colors, fontScale } = useAccessibility();

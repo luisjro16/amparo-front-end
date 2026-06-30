@@ -285,13 +285,15 @@ export default function CadastrarMedicamento({ navigation }: CadastroScreenProps
           style={styles.input}
         />
         
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
             <TouchableOpacity onPress={() => setShowStartTimePicker(true)} style={[styles.input, { flex: 1, marginRight: 10 }]}>
-                <Text>{`Início: ${format(formData.horario_inicio, 'HH:mm')}`}</Text>
+                <Text style={{ color: formData.horario_inicio ? colors.text : colors.textSecondary }}> 
+                  {formData.horario_inicio ? `Início: ${format(formData.horario_inicio, 'HH:mm')}` : 'Início'}
+                </Text>
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => setShowEndTimePicker(true)} style={[styles.input, { flex: 1 }]}>
-                <Text style={{ color: formData.horario_fim ? '#000' : '#999' }}>
+                <Text style={{ color: formData.horario_fim ? colors.text : colors.textSecondary }}>
                     {formData.horario_fim ? `Fim: ${format(formData.horario_fim, 'HH:mm')}` : 'Fim (Opcional)'}
                 </Text>
             </TouchableOpacity>
@@ -307,7 +309,7 @@ export default function CadastrarMedicamento({ navigation }: CadastroScreenProps
                       value={showStartTimePicker ? formData.horario_inicio : (formData.horario_fim || new Date())}
                       mode="time"
                       is24Hour={true}
-                      textColor='black'
+                      textColor={colors.text}
                       display="spinner" 
                       onChange={showStartTimePicker ? onChangeStartTime : onChangeEndTime}
                     />
@@ -325,13 +327,13 @@ export default function CadastrarMedicamento({ navigation }: CadastroScreenProps
         )}
 
         <RNPickerSelect
-          placeholder={{ label: 'Selecione o intervalo...', value: null }}
+          placeholder={{ label: 'Selecione o intervalo...', value: null, color:'black' }}
           items={[
-            { label: 'A cada 4 horas', value: '4' },
-            { label: 'A cada 6 horas', value: '6' },
-            { label: 'A cada 8 horas', value: '8' },
-            { label: 'A cada 12 horas', value: '12' },
-            { label: 'Uma vez ao dia (24 horas)', value: '24' },
+            { label: 'A cada 4 horas', value: '4', color:'black' },
+            { label: 'A cada 6 horas', value: '6', color:'black' },
+            { label: 'A cada 8 horas', value: '8', color:'black' },
+            { label: 'A cada 12 horas', value: '12', color:'black' },
+            { label: 'Uma vez ao dia (24 horas)', value: '24', color:'black' },
           ]}
           onValueChange={(value) => handleInputChange('intervalo', value)}
           value={formData.intervalo}
