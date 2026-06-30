@@ -12,6 +12,7 @@ import BottomNavigationBar from '../../components/BottomNavigationBar';
 import { useAuth } from '../../contexts/AuthContext';
 import * as Notifications from 'expo-notifications';
 import { notificarEstoqueBaixo } from '../../services/notificacao';
+import { useAccessibility, ColorPalette } from '../../contexts/AccessibilityContext';
 
 
 type RegistroType = any; 
