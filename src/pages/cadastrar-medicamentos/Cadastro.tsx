@@ -155,6 +155,7 @@ export default function CadastrarMedicamento({ navigation }: CadastroScreenProps
     setShowEndTimePicker(false);
   }
   
+  // Validações do Formulário
   const handleSave = async () => {
     const intervaloNum = parseInt(formData.intervalo, 10);
     const duracaoNum = formData.duracao_valor ? parseInt(formData.duracao_valor, 10) : null;
@@ -171,6 +172,14 @@ export default function CadastrarMedicamento({ navigation }: CadastroScreenProps
         Alert.alert('Atenção', 'Por favor, insira uma duração em dias válida.');
         return;
     }
+
+    if (!formData.estoque_atual || !formData.aviso_estoque_minimo) {Alert.alert("Atenção","Por favor, informe o estoque atual e o estoque mínimo para notificação.");
+    return;
+  }
+
+    if (!formData.dosagem_unidade) {Alert.alert('Atenção', 'Por favor, insira uma unidade de dosagem válida.');
+    return;
+  }
 
     setLoading(true);
 
@@ -253,12 +262,44 @@ export default function CadastrarMedicamento({ navigation }: CadastroScreenProps
       );
 
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error("Erro no cadastro do medicamento:", JSON.stringify(error.response?.data));
-      } else {
-        console.error("Erro no cadastro do medicamento:", error);
+    if (axios.isAxiosError(error)) {
+      const erros = error.response?.data;
+
+      console.error("Erro no cadastro do medicamento:", JSON.stringify(erros));
+
+      if (erros?.dosagem_unidade) {
+        Alert.alert(
+          'Atenção',
+          'Por favor, insira uma unidade válida para a dosagem.'
+        );
+        return;
       }
-      Alert.alert('Erro', 'Não foi possível cadastrar o medicamento.');
+
+      if (erros?.aviso_estoque_minimo) {
+        Alert.alert(
+          'Atenção',
+          'Por favor, insira um valor válido para o estoque mínimo.'
+        );
+        return;
+      }
+
+      if (erros?.nome) {
+        Alert.alert(
+          'Atenção',
+          'Por favor, informe um nome válido para o medicamento.'
+        );
+        return;
+      }
+
+    } else {
+      console.error("Erro inesperado:", error);
+    }
+
+    Alert.alert(
+      'Erro',
+      'Não foi possível cadastrar o medicamento.'
+    );
+
     } finally {
       setLoading(false);
     }
